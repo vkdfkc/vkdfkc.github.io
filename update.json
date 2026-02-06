@@ -8,12 +8,13 @@
   },
   "ExternLua": {
     "version": "1.0.0.0",
-    "url": "https://github.com/vkdfkc/FVMLite/releases/download/v1.0.0.1/ExternLua.zip",
+    "url": "https://github.com/vkdfkc/FVMLite/releases/download/v1.0.0.0/ExternLua.zip",
     "size": 769344
   },
   "ResourceRez": {
     "version": "1.0.0.0",
-    "url": "https://github.com/vkdfkc/FVMLite/releases/download/v1.0.0.1/ResourceRez.zip",
+    "url": "https://github.com/vkdfkc/FVMLite/releases/download/v1.0.0.0/ResourceRez.zip",
     "size": 111700592
   }
+
 }
