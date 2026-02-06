@@ -1,0 +1,19 @@
+{
+  "app": {
+    "latest_version": "1.0.0.0",
+    "min_version": "1.0.0.0",
+    "download_url": "https://github.com/vkdfkc/FVMLite/releases/download/v1.0.0.1/app-release.apk",
+    "release_notes": "1. 修复了若干BUG\n2. 优化了游戏性能\n3. 新增了关卡内容",
+    "force_update": false
+  },
+  "ExternLua": {
+    "version": "1.0.0.0",
+    "url": "https://github.com/vkdfkc/FVMLite/releases/download/v1.0.0.1/ExternLua.zip",
+    "size": 769344
+  },
+  "ResourceRez": {
+    "version": "1.0.0.0",
+    "url": "https://github.com/vkdfkc/FVMLite/releases/download/v1.0.0.1/ResourceRez.zip",
+    "size": 111700592
+  }
+}
