@@ -121,9 +121,6 @@ const MapEditor = {
 		this.initWaveEditModalEvents();
 		this.renderCottonCandyZonesUI();
 		this.renderPlatformGroupsUI();
-		
-		
-
 		// 初始化右侧面板标签页状态
 		this.switchTab('cell'); // 默认激活单元格属性标签页
 	},
@@ -364,7 +361,7 @@ const MapEditor = {
 	renderPlatformGroupsUI: function() {
 	    const container = document.getElementById('platformGroupsContainer');
 	    if (!container) return;
-	    
+	    if (!this.mapData.platformGroups) return;
 	    let html = '';
 	    this.mapData.platformGroups.forEach((group, idx) => {
 	        html += `<div class="wave-item" data-index="${idx}">
@@ -909,7 +906,7 @@ const MapEditor = {
 	renderCottonCandyZonesUI: function() {
 	    const container = document.getElementById('cottonCandyZonesContainer');
 	    if (!container) return;
-	    
+	    if (!this.mapData.cottonCandyZones) return;
 	    let html = '';
 	    this.mapData.cottonCandyZones.forEach((zone, idx) => {
 	        html += `<div class="wave-item" data-index="${idx}">
@@ -3607,6 +3604,12 @@ const MapEditor = {
 				cells: [],
 				waves: [],
 				effects: [],
+				platformGroups: [],        // 移动平台组
+				cottonCandyZones: [],      // 棉花糖区域
+				cottonCandyHoleGen: {
+				    mode: "timed",   // "columnRandom" 或 "timed"
+				    interval: 30.0
+				},
 				timeLimit: {
 				    enabled: false,
 				    seconds: 60
@@ -3827,6 +3830,7 @@ const MapEditor = {
 			        end_col: zone.end_col
 			    }));
 			}
+			
 			// 解析平台组
 			if (mapConfig.PlatformGroups && Array.isArray(mapConfig.PlatformGroups)) {
 			    this.mapData.platformGroups = mapConfig.PlatformGroups.map(pg => ({
@@ -3845,6 +3849,9 @@ const MapEditor = {
 			this.renderGrid();
 			this.renderWavesUI();
 			this.renderEffectsUI();
+			this.renderCottonCandyZonesUI();
+			this.renderPlatformGroupsUI();
+			
 
 			console.log("地图加载完成，数据已完全重置");
 			// alert(`地图 ${this.mapData.mapName} 加载成功`);
