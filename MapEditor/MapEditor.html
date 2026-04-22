@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>地图编辑器</title>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+		<link rel="stylesheet" href="MapEditor.css">
+		<script type="text/javascript" src="MapEditorCore.js" charset="utf-8"></script>
+	</head>
+	<body>
+		<div class="container">
+			<!-- 左侧面板 -->
+			<div class="left-panel">
+				<div class="panel-header">
+					<i class="fas fa-map"></i> 地图编辑器
+				</div>
+
+				<div class="panel-section">
+					<div class="section-title">地图属性</div>
+					<div class="form-group">
+						<label for="mapId">地图ID</label>
+						<input type="text" id="mapId" class="form-control" value="level_01">
+					</div>
+					<div class="form-group">
+						<label for="mapName">地图名称</label>
+						<input type="text" id="mapName" class="form-control" value="新手关卡">
+					</div>
+					<div class="form-group">
+						<label for="defCellWidth">单元格宽度</label>
+						<input type="number" id="defCellWidth" class="form-control" value="80" min="20" max="200">
+					</div>
+					<div class="form-group">
+						<label for="defCellHeight">单元格高度</label>
+						<input type="number" id="defCellHeight" class="form-control" value="80" min="20" max="200">
+					</div>
+					<div class="form-group">
+						<label for="time">时间 (0-23)</label>
+						<input type="number" id="time" class="form-control" value="12" min="0" max="23">
+					</div>
+					<div class="form-group">
+						<label for="fogCols">迷雾列数</label>
+						<input type="number" id="fogCols" class="form-control" value="0" min="0" max="20">
+					</div>
+					<div class="form-group">
+						<label for="startFrame">起始帧</label>
+						<input type="number" id="startFrame" class="form-control" value="0" min="0">
+					</div>
+					<div class="btn-group">
+						<button id="newMapBtn" class="btn"><i class="fas fa-file"></i> 新建</button>
+						<button id="loadMapBtn" class="btn"><i class="fas fa-folder-open"></i> 加载</button>
+					</div>
+				</div>
+
+				<div class="panel-section">
+					<div class="section-title">网格设置</div>
+					<div class="form-group">
+						<label for="gridCols">列数</label>
+						<input type="number" id="gridCols" class="form-control" value="9" min="1" max="30">
+					</div>
+					<div class="form-group">
+						<label for="gridRows">行数</label>
+						<input type="number" id="gridRows" class="form-control" value="5" min="1" max="30">
+					</div>
+					<div class="form-group">
+						<label for="terrainType">默认地形</label>
+						<select id="terrainType" class="form-control">
+							<option value="0">普通</option>
+							<option value="1">水上</option>
+							<option value="2">洞穴</option>
+							<option value="3">岩石</option>
+							<option value="4">熔岩</option>
+							<option value="5">天空</option>
+							<option value="6">水下</option>
+						</select>
+					</div>
+					<div class="btn-group">
+						<button id="resizeGridBtn" class="btn btn-primary"><i class="fas fa-expand-alt"></i> 应用</button>
+						<button id="clearGridBtn" class="btn"><i class="fas fa-trash"></i> 清空</button>
+					</div>
+				</div>
+
+				<div class="panel-section">
+					<div class="section-title">单元格类型</div>
+					<div class="form-group">
+						<div class="list-item" data-type="0">
+							<span class="color-preview grass"></span> 普通
+						</div>
+						<div class="list-item" data-type="1">
+							<span class="color-preview water"></span> 水上
+						</div>
+						<div class="list-item" data-type="2">
+							<span class="color-preview hole"></span> 洞穴
+						</div>
+						<div class="list-item" data-type="3">
+							<span class="color-preview stone"></span> 岩石
+						</div>
+						<div class="list-item" data-type="4">
+							<span class="color-preview lava"></span> 熔岩
+						</div>
+						<div class="list-item" data-type="5">
+							<span class="color-preview sky"></span> 天空
+						</div>
+						<div class="list-item" data-type="6">
+							<span class="color-preview inwater"></span> 水下
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="selectedCellType">当前选中类型</label>
+						<div id="selectedCellTypeDisplay" class="form-control"
+							style="display: flex; align-items: center;">
+							<span id="selectedColorPreview" class="color-preview grass"></span>
+							<span id="selectedTypeText">普通</span>
+						</div>
+					</div>
+					<div class="btn-group">
+						<button id="fillGridBtn" class="btn"><i class="fas fa-fill-drip"></i> 填充全部</button>
+					</div>
+				</div>
+				<div class="panel-section">
+					<div class="section-title">阳光设置</div>
+					<div class="form-group">
+						<label for="generateSunlight">是否生成阳光</label>
+						<select id="generateSunlight" class="form-control">
+							<option value="true">是</option>
+							<option value="false">否</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="maxSunlight">最大阳光数</label>
+						<input type="number" id="maxSunlight" class="form-control" value="50" min="0" max="999">
+					</div>
+					<div class="form-group">
+						<label for="currentFireCount">基础阳光数</label>
+						<input type="number" id="currentFireCount" class="form-control" value="25" min="0" max="999">
+					</div>
+					<div class="form-group">
+						<label for="sunlightEscape">产生时间间隔基数</label>
+						<input type="number" id="sunlightEscape" class="form-control" value="600" min="0">
+					</div>
+					<div class="form-group">
+						<label for="sunlightDealt">产生时间间隔随机增量</label>
+						<input type="number" id="sunlightDealt" class="form-control" value="550" min="0">
+					</div>
+					<div class="form-group">
+						<label for="sunlightMode">产生模式</label>
+						<input type="number" id="sunlightMode" class="form-control" value="1" min="0">
+					</div>
+
+					<div class="section-title">特效设置</div>
+					<div class="form-group">
+						<button id="addEffectBtn" class="btn btn-primary" style="margin-bottom: 10px;">
+							<i class="fas fa-plus"></i> 添加特效
+						</button>
+						<div id="effectsContainer">
+							<!-- 特效配置将在这里动态生成 -->
+						</div>
+					</div>
+
+					<div class="section-title">BGM设置</div>
+					<div class="form-group">
+						<label for="defBgm">默认BGM</label>
+						<input type="number" id="defBgm" class="form-control" value="1" min="0" max="10">
+					</div>
+
+					<!-- 在resources-tab标签页中添加 -->
+					<div class="section-title">地图描述</div>
+					<div class="form-group">
+						<label for="descText">描述文本</label>
+						<input type="text" id="descText" class="form-control" value="地图名\天气\模式\攻击波数">
+					</div>
+					<div class="form-group">
+						<label for="descLib">描述库GUID</label>
+						<input type="text" id="descLib" class="form-control" value="">
+					</div>
+					<div class="form-group">
+						<label for="descImage">描述图像GUID</label>
+						<input type="text" id="descImage" class="form-control" value="">
+					</div>
+					<div class="form-group">
+						<label for="descMon">描述怪物 (用逗号分隔)</label>
+						<input type="text" id="descMon" class="form-control" value="">
+					</div>
+					<div class="form-group">
+						<label for="descBoss">BOSS描述</label>
+						<input type="text" id="descBoss" class="form-control" value="">
+					</div>
+					<div class="form-group">
+						<label for="descBossLib">BOSS库GUID</label>
+						<input type="text" id="descBossLib" class="form-control" value="">
+					</div>
+					<div class="form-group">
+						<label for="descBossImage">BOSS图像GUID</label>
+						<input type="text" id="descBossImage" class="form-control" value="">
+					</div>
+				</div>
+				<!-- 地图进阶属性 -->
+				<div class="panel-section">
+					<div class="section-title">进阶属性</div>
+					<div class="form-group">
+						<label for="defExp">基础经验</label>
+						<input type="number" id="defExp" class="form-control" value="5000">
+					</div>
+					<div class="form-group">
+						<label for="defExpDelta">经验增量</label>
+						<input type="number" id="defExpDelta" class="form-control" value="5000">
+					</div>
+					<div class="form-group">
+						<label for="warnMsg">警告信息</label>
+						<input type="text" id="warnMsg" class="form-control" value="">
+					</div>
+				</div>
+
+				<!-- 老鼠洞设置 -->
+				<div class="panel-section">
+					<div class="section-title">老鼠洞设置</div>
+					<div class="form-group">
+						<label for="holeCol">老鼠洞列数（从右侧算起）</label>
+						<input type="number" id="holeCol" class="form-control" value="0">
+					</div>
+					<div class="form-group">
+						<label for="holeMon">老鼠洞怪物ID列表（逗号分隔）</label>
+						<input type="text" id="holeMon" class="form-control" value="">
+					</div>
+					<div class="form-group">
+						<label for="holeGenBase">生成老鼠洞础间隔（帧）</label>
+						<input type="number" id="holeGenBase" class="form-control" value="0">
+					</div>
+					<div class="form-group">
+						<label for="holeGenDelta">生成老鼠洞随机增量（帧）</label>
+						<input type="number" id="holeGenDelta" class="form-control" value="0">
+					</div>
+					<div class="form-group">
+						<label for="holeSpawnBase">老鼠洞刷怪基础间隔（帧）</label>
+						<input type="number" id="holeSpawnBase" class="form-control" value="0">
+					</div>
+					<div class="form-group">
+						<label for="holeSpawnDelta">老鼠洞刷怪随机增量（帧）</label>
+						<input type="number" id="holeSpawnDelta" class="form-control" value="0">
+					</div>
+				</div>
+
+				<!-- 限时模式配置 -->
+				<div class="panel-section">
+					<div class="section-title">限时模式</div>
+					<div class="form-group">
+						<label for="timeLimitEnabled">限时模式</label>
+						<select id="timeLimitEnabled" class="form-control">
+							<option value="false">禁用</option>
+							<option value="true">启用</option>
+						</select>
+					</div>
+					<div class="form-group" id="timeLimitSecondsGroup" style="display: none;">
+						<label for="timeLimitSeconds">限时时长 (秒)</label>
+						<input type="number" id="timeLimitSeconds" class="form-control" value="60" min="1" max="9999">
+					</div>
+				</div>
+
+				<div class="panel-section">
+					<div class="section-title">操作</div>
+					<div class="btn-group">
+						<button id="saveMapBtn" class="btn btn-primary"><i class="fas fa-save"></i> 保存地图</button>
+					</div>
+					<div class="btn-group" style="margin-top: 10px;">
+						<button id="exportJsonBtn" class="btn"><i class="fas fa-code"></i> 查看JSON</button>
+						<button id="importJsonBtn" class="btn"><i class="fas fa-file-import"></i> 加载JSON</button>
+					</div>
+					<div class="btn-group" style="margin-top: 10px;">
+						<button id="exportLuaBtn" class="btn"><i class="fas fa-code"></i> 查看Lua</button>
+					</div>
+				</div>
+			</div>
+
+			<!-- 中间地图区域 -->
+			<div class="map-area">
+				<div class="map-header">
+					<div class="map-title" id="currentMapTitle">新手关卡 (9x5)</div>
+					<div class="map-controls">
+						<button id="zoomInBtn" class="btn"><i class="fas fa-search-plus"></i></button>
+						<button id="zoomOutBtn" class="btn"><i class="fas fa-search-minus"></i></button>
+						<button id="centerMapBtn" class="btn"><i class="fas fa-crosshairs"></i></button>
+					</div>
+				</div>
+				<div class="map-container">
+					<div id="gridContainer" class="grid-container"
+						style="grid-template-columns: repeat(9, 80px); grid-template-rows: repeat(5, 80px);">
+						<!-- 网格单元格将通过JavaScript动态生成 -->
+					</div>
+				</div>
+			</div>
+
+			<!-- 右侧面板 -->
+			<div class="right-panel">
+				<div class="tab-container">
+					<div class="tab active" data-tab="cell">格子属性</div>
+					<div class="tab" data-tab="resources">资源设置</div>
+					<div class="tab" data-tab="regions">地形设置</div>
+					<div class="tab" data-tab="waves">波次配置</div>
+				</div>
+
+				<div class="tab-content">
+					<!-- 单元格属性标签页 -->
+					<div id="cell-tab" class="tab-pane active">
+						<div class="section-title">选中的格子</div>
+						<div class="form-group">
+							<label>位置</label>
+							<div class="form-control">行: <span id="cellRow">-</span>, 列: <span id="cellCol">-</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="cellType">格子类型</label>
+							<select id="cellType" class="form-control">
+								<option value="0">普通</option>
+								<option value="1">水上</option>
+								<option value="2">洞穴</option>
+								<option value="3">岩石</option>
+								<option value="4">熔岩</option>
+								<option value="5">天空</option>
+								<option value="6">水下</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label for="cellWeather">天气效果</label>
+							<select id="cellWeather" class="form-control">
+								<option value="0">无</option>
+								<option value="1">雾</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label for="cellVirtualZ">虚拟高度</label>
+							<input type="number" id="cellVirtualZ" class="form-control" value="0.0" step="0.1">
+						</div>
+						<div class="form-group">
+							<label for="cellWidth">宽度 (单元格)</label>
+							<input type="number" id="cellWidth" class="form-control" value="1" min="1" max="5">
+						</div>
+						<div class="form-group">
+							<label for="cellHeight">高度 (单元格)</label>
+							<input type="number" id="cellHeight" class="form-control" value="1" min="1" max="5">
+						</div>
+
+						<div class="section-title">预放置植物</div>
+						<div id="prePlaceContainer">
+							<div class="form-control" style="text-align: center; padding: 20px;">
+								未选择单元格或没有预放置配置
+							</div>
+						</div>
+						<div class="btn-group" style="margin-top: 10px;">
+							<button id="addPrePlaceBtn" class="btn"><i class="fas fa-plus"></i> 添加预放置</button>
+							<button id="clearPrePlaceBtn" class="btn"><i class="fas fa-trash"></i> 清空</button>
+						</div>
+					</div>
+
+					<!-- 波次配置标签页 -->
+					<div id="waves-tab" class="tab-pane">
+						<div class="section-title">
+							<span>波次配置</span>
+							<button id="addWaveBtn" class="btn btn-primary"
+								style="padding: 3px 8px; font-size: 0.75rem;"><i class="fas fa-plus"></i> 添加波次</button>
+							<button id="quickWaveBtn" class="btn btn-primary"
+								style="padding: 3px 8px; font-size: 0.75rem; margin-left: 5px;"><i
+									class="fas fa-bolt"></i> 快速生成</button>
+							<button id="templateWaveBtn" class="btn btn-primary"
+								style="padding: 3px 8px; font-size: 0.75rem; margin-left: 5px;">
+								<i class="fas fa-magic"></i> 智能模板
+							</button>
+						</div>
+						<div id="wavesContainer">
+							<!-- <div class="wave-item">
+                            <div class="wave-header">
+                                <div class="wave-title">波次 1</div>
+                                <div>
+                                    <button class="btn edit-wave" style="padding: 2px 5px; font-size: 0.8rem;"><i
+                                            class="fas fa-edit"></i></button>
+                                    <button class="btn btn-danger delete-wave" style="padding: 2px 5px; font-size: 0.8rem;"><i
+                                            class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                            <div class="task-item">
+                                <div><strong>任务 1</strong></div>
+                                <div class="monster-item">
+                                    <div class="monster-icon"></div>
+                                    <div>普通僵尸 x 10</div>
+                                </div>
+                            </div>
+                        </div> -->
+						</div>
+					</div>
+					<div id="regions-tab" class="tab-pane">
+						<div class="section-title">移动平台组</div>
+						<div class="form-group">
+							<button id="addPlatformGroupBtn" class="btn btn-primary" style="margin-bottom: 10px;">
+								<i class="fas fa-plus"></i> 添加平台组
+							</button>
+							<div id="platformGroupsContainer">
+								<!-- 平台组列表动态生成 -->
+								<div class="form-control" style="text-align:center;">暂无平台组</div>
+							</div>
+						</div>
+
+						<div class="section-title">棉花糖区域</div>
+						<div class="form-group">
+							<button id="addCottonCandyZoneBtn" class="btn btn-primary" style="margin-bottom: 10px;">
+								<i class="fas fa-plus"></i> 添加区域
+							</button>
+							<div id="cottonCandyZonesContainer">
+								<!-- 区域列表动态生成 -->
+								<div class="form-control" style="text-align:center;">暂无棉花糖区域</div>
+							</div>
+						</div>
+						<div class="section-title">空洞生成模式</div>
+						<div class="form-group">
+							<label for="holeGenMode">生成模式</label>
+							<select id="holeGenMode" class="form-control">
+								<option value="columnRandom">按列随机</option>
+								<option value="timed">定时生成</option>
+							</select>
+						</div>
+						<div id="timedIntervalGroup" class="form-group" style="display: none;">
+							<label for="timedInterval">间隔（秒）</label>
+							<input type="number" id="timedInterval" class="form-control" value="5.0" step="0.5" min="1">
+						</div>
+
+					</div>
+
+					<!-- 资源设置标签页 -->
+					<div id="resources-tab" class="tab-pane">
+						<div class="section-title">背景设置</div>
+						<div class="form-group">
+							<label for="backgroundLib">资源库</label>
+							<input type="text" id="backgroundLib" class="form-control" value="backgrounds">
+						</div>
+						<div class="form-group">
+							<label for="backgroundImage">图像ID</label>
+							<input type="text" id="backgroundImage" class="form-control" value="bg_grassland">
+						</div>
+						<div class="form-group">
+							<label for="backgroundOffsetX">偏移X</label>
+							<input type="number" id="backgroundOffsetX" class="form-control" value="0">
+						</div>
+						<div class="form-group">
+							<label for="backgroundOffsetY">偏移Y</label>
+							<input type="number" id="backgroundOffsetY" class="form-control" value="0">
+						</div>
+
+						<div class="section-title">前景设置</div>
+						<div class="form-group">
+							<label for="foregroundLib">资源库</label>
+							<input type="text" id="foregroundLib" class="form-control" value="foregrounds">
+						</div>
+						<div class="form-group">
+							<label for="foregroundImage">图像ID</label>
+							<input type="text" id="foregroundImage" class="form-control" value="fg_trees">
+						</div>
+						<div class="form-group">
+							<label for="foregroundOffsetX">偏移X</label>
+							<input type="number" id="foregroundOffsetX" class="form-control" value="0">
+						</div>
+						<div class="form-group">
+							<label for="foregroundOffsetY">偏移Y</label>
+							<input type="number" id="foregroundOffsetY" class="form-control" value="0">
+						</div>
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- JSON查看/编辑模态框 -->
+		<div id="jsonModal" class="modal">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3>地图JSON数据</h3>
+					<span class="close-modal">&times;</span>
+				</div>
+				<div class="modal-body">
+					<div class="btn-group" style="margin-bottom: 15px;">
+						<button id="copyJsonBtn" class="btn"><i class="fas fa-copy"></i> 复制JSON</button>
+						<button id="loadJsonBtn" class="btn"><i class="fas fa-file-import"></i> 导入JSON</button>
+					</div>
+					<div id="jsonViewer" class="json-viewer">
+						{/* JSON数据将在这里显示 */}
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="luaModal" class="modal">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3>地图Lua Table数据</h3>
+					<span class="close-lua-modal">&times;</span>
+				</div>
+				<div class="modal-body">
+					<div class="btn-group" style="margin-bottom: 15px;">
+						<button id="copyLuaBtn" class="btn"><i class="fas fa-copy"></i> 复制Lua</button>
+						<button id="downloadLuaBtn" class="btn"><i class="fas fa-download"></i> 下载Lua文件</button>
+					</div>
+					<div id="luaViewer" class="json-viewer">
+						{/* Lua数据将在这里显示 */}
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 波次编辑模态框 -->
+		<div id="waveEditModal" class="modal">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3>波次配置编辑</h3>
+					<span class="close-modal">&times;</span>
+				</div>
+				<div class="modal-body" style="display: flex; height: 500px;"> <!-- 添加 flex 布局和固定高度以支持滚动 -->
+					<!-- 左侧侧边栏：任务管理列表 -->
+					<div id="taskSidebar" class="task-sidebar"
+						style="width: 25%; border-right: 1px solid #0f3460; padding: 10px; overflow-y: auto;">
+						<!-- 任务列表将通过 JS 动态生成 -->
+					</div>
+					<!-- 右侧编辑区域 -->
+					<div id="waveEditRight" style="width: 80%; padding: 10px; overflow-y: auto;">
+						<div class="tab-container" style="margin-bottom: 10px;">
+							<div class="tab active" data-tab="basic">基础设置</div>
+							<div class="tab" data-tab="monsters">怪物配置</div>
+							<div class="tab" data-tab="boss">BOSS设置</div>
+							<div class="tab" data-tab="infinite">无限循环怪物</div>
+							<div class="tab" data-tab="healthbar">血条配置</div>
+						</div>
+						<div id="waveEditContent">
+							<!-- 编辑表单将在这里动态生成 -->
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer" style="padding: 10px; text-align: right;"> <!-- 新增 footer 以放置按钮，避免按钮被滚动隐藏 -->
+					<div class="btn-group">
+						<button id="saveWaveBtn" class="btn btn-primary">保存波次</button>
+						<button id="cancelWaveBtn" class="btn">取消</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 快速生成波次模态框 -->
+		<div id="quickWaveModal" class="modal">
+			<div class="modal-content" style="max-width: 600px;">
+				<div class="modal-header">
+					<h3>快速生成刷怪波次</h3>
+					<span class="close-modal">&times;</span>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<label>总刷怪数量</label>
+						<input type="number" id="quickTotalCount" class="form-control" value="50" min="1">
+					</div>
+					<div class="form-group">
+						<label>必刷怪物</label>
+						<div id="requiredMonstersContainer">
+							<!-- 动态添加必刷怪物条目 -->
+						</div>
+						<button id="addRequiredMonsterBtn" class="btn" style="margin-top: 5px;"><i
+								class="fas fa-plus"></i> 添加必刷怪物</button>
+					</div>
+					<div class="form-group">
+						<label>填充怪物ID列表（用逗号分隔）</label>
+						<input type="text" id="fillerMonsterIds" class="form-control"
+							placeholder="例如: zombie_normal, conehead_zombie" value="zombie_normal">
+					</div>
+					<div class="form-group">
+						<label>任务间隔（帧）</label>
+						<div style="display: flex; gap: 10px;">
+							<input type="number" id="intervalMin" class="form-control" placeholder="最小" value="60"
+								min="1" style="width: 50%;">
+							<input type="number" id="intervalMax" class="form-control" placeholder="最大" value="180"
+								min="1" style="width: 50%;">
+						</div>
+					</div>
+					<div class="btn-group" style="margin-top: 20px;">
+						<button id="generateQuickWaveBtn" class="btn btn-primary">生成波次</button>
+						<button class="btn close-modal">取消</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<div id="templateWaveModal" class="modal" style="display:none;">
+			<div class="modal-content" style="max-width:700px;">
+				<div class="modal-header">
+					<h3><i class="fas fa-magic"></i> 智能刷怪模板生成（权重版）</h3>
+					<span class="close-modal">&times;</span>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<label>普通怪物列表（格式：ID:权重，逗号分隔）</label>
+						<textarea id="templateNormalIds" class="form-control" rows="4"
+							placeholder="例如：fvm:normal_mouse:10, fvm:football_mouse:6"></textarea>
+						<small>权重越高 → 出现越早、概率越大、数量越多（默认权重10）</small>
+					</div>
+					<hr>
+					<!-- 中场BOSS区域（可动态添加） -->
+					<div class="form-group">
+						<label>中场 BOSS 列表</label>
+						<div id="midBossesContainer" style="margin-bottom:8px;">
+							<!-- 动态插入行 -->
+						</div>
+						<button type="button" id="addMidBossBtn" class="btn btn-sm"
+							style="background:#6c757d; color:white;">
+							<i class="fas fa-plus"></i> 添加中场BOSS
+						</button>
+						<small>每个中场BOSS将在指定波次单独出现（该波次原有任务将被替换）。</small>
+					</div>
+					<hr>
+					<div class="form-row" style="display:flex; gap:10px;">
+						<div class="form-group" style="flex:2;">
+							<label>最终 BOSS ID（可选）</label>
+							<input type="text" id="templateBossId" class="form-control" placeholder="例如：fvm:final_boss">
+						</div>
+						<div class="form-group" style="flex:1;">
+							<label>总波次数</label>
+							<input type="number" id="templateWaveCount" class="form-control" value="14" min="2"
+								max="20">
+						</div>
+					</div>
+					<div class="btn-group" style="margin-top:20px;">
+						<button id="generateTemplateBtn" class="btn btn-success">
+							<i class="fas fa-check"></i> 生成波次
+						</button>
+						<button class="btn close-modal">取消</button>
+					</div>
+					<hr>
+					<small class="text-muted">
+						提示：生成后将<strong>替换</strong>当前所有波次配置，建议先备份。
+					</small>
+				</div>
+			</div>
+		</div>
+		
+		
+	</body>
+</html>
