@@ -636,3 +636,154 @@ select.form-control {
 .required-monster-row .form-control {
     margin-bottom: 0;
 }
+
+/* ========== 移动端适配 ========== */
+@media (max-width: 900px) {
+    body {
+        overflow: auto;
+    }
+
+    .container {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+    }
+
+    /* 左侧面板 */
+    .left-panel {
+        width: 100%;
+        max-height: 40vh;
+        border-right: none;
+        border-bottom: 2px solid #0f3460;
+        overflow-y: auto;
+    }
+
+    /* 中间地图区域 */
+    .map-area {
+        height: 60vh;
+        min-height: 400px;
+        flex: none;
+    }
+
+    .map-container {
+        padding: 10px;
+        justify-content: flex-start;
+        align-items: flex-start;
+    }
+
+    .grid-container {
+        /* 保持原始列宽，通过滚动查看 */
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* 右侧面板 */
+    .right-panel {
+        width: 100%;
+        max-height: 50vh;
+        border-left: none;
+        border-top: 2px solid #0f3460;
+        overflow-y: auto;
+    }
+
+    /* 调整按钮组和内边距 */
+    .btn-group {
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 10px 12px;
+        font-size: 1rem;
+    }
+
+    .form-control {
+        font-size: 16px; /* 防止 iOS 自动缩放 */
+        padding: 10px;
+    }
+
+    .panel-section {
+        padding: 12px;
+    }
+
+    .section-title {
+        font-size: 1.1rem;
+    }
+
+    /* 波次编辑模态框在移动端改为上下布局 */
+    #waveEditModal .modal-body {
+        flex-direction: column;
+        height: auto;
+        max-height: 70vh;
+    }
+
+    #taskSidebar {
+        width: 100% !important;
+        border-right: none !important;
+        border-bottom: 1px solid #0f3460;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    #waveEditRight {
+        width: 100% !important;
+        padding: 10px;
+    }
+
+    /* 所有模态框宽度自适应 */
+    .modal-content {
+        width: 95%;
+        max-width: 95%;
+        margin: 10px;
+        max-height: 90vh;
+    }
+
+    .modal-body {
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+
+    /* 快速生成模态框内输入框 */
+    #quickWaveModal .modal-content {
+        max-width: 100%;
+    }
+
+    /* 标签页字体大小 */
+    .tab {
+        padding: 12px 5px;
+        font-size: 0.9rem;
+    }
+
+    /* 列表项增大点击区域 */
+    .list-item {
+        padding: 12px 10px;
+        margin-bottom: 8px;
+    }
+
+    /* 推车列图标大小调整 */
+    .grid-cell.cart-cell {
+        font-size: 1.5rem;
+    }
+}
+
+/* 针对更小屏幕（手机竖屏）的微调 */
+@media (max-width: 480px) {
+    .map-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .map-controls {
+        align-self: flex-end;
+    }
+
+    .btn-group .btn {
+        flex: 1 0 auto;
+    }
+
+    .cell-info {
+        font-size: 0.6rem;
+        padding: 1px 3px;
+    }
+}
+
